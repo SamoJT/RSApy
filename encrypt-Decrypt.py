@@ -12,13 +12,10 @@ def power(y, x, n):
         return (y*power((y*y)%n,x//2,n))%n
 
 def encrypt(msg,e,n):
-	alpha = ["A","B","C","D","E",
-	"F","G","H","I","J","K","L",
-	"M","N","O","P","Q","R","S",
-	"T","U","V","W","X","Y","Z","."]
 	encMsg = []
 	for i in msg:
 		encMsg.append(power(ord(i),e,n))
+	#print(encMsg)
 	return(fileMk(encMsg))
 
 def fileMk(encMsg):
@@ -34,15 +31,12 @@ def fileOp():
 	return(c)
 
 def decrypt(d,n):
-	alpha = ["A","B","C","D","E",
-	"F","G","H","I","J","K","L",
-	"M","N","O","P","Q","R","S",
-	"T","U","V","W","X","Y","Z"," "]
 	c = fileOp()
 	msg = ""
 	print("Be patient! May take some time.")
 	for  i in c:
-		msg = msg+alpha[power(i,d,n)]
+		tst = power(i,d,n)
+		msg = msg+chr(power(i,d,n))
 	return(print(msg))
 
 def main():
