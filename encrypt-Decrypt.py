@@ -1,27 +1,31 @@
+#!/usr/bin/env python3.5
 import binascii
 import pickle
 import sys
+
+def power(y, x, n):
+    if x == 0: #base case
+        return 1
+    elif (x%2==0): #x even 
+        return power((y*y)%n,x//2,n)%n
+    else: #x odd
+        return (y*power((y*y)%n,x//2,n))%n
 
 def encrypt(msg,e,n):
 	alpha = ["A","B","C","D","E",
 	"F","G","H","I","J","K","L",
 	"M","N","O","P","Q","R","S",
 	"T","U","V","W","X","Y","Z","."]
-	msgList = list(msg.upper())
 	encMsg = []
-	for i in msgList:
-		ind = alpha.index(i)
-		c0 = ind**e
-		c1 = c0%n
-		#print(c1)
-		encMsg.append(c1)
+	for i in msg:
+		encMsg.append(power(ord(i),e,n))
 	return(fileMk(encMsg))
 
 def fileMk(encMsg):
 	f = open("rsaEnc.txt","wb")
 	pickle.dump(encMsg,f)
 	f.close()
-	return(print("File creted. Success. Send the owner of the key the txt file."))
+	return(print("File created. Success. Send the owner of the key the txt file."))
 
 def fileOp():
 	f = open("rsaEnc.txt","rb")
@@ -33,14 +37,12 @@ def decrypt(d,n):
 	alpha = ["A","B","C","D","E",
 	"F","G","H","I","J","K","L",
 	"M","N","O","P","Q","R","S",
-	"T","U","V","W","X","Y","Z","."]
+	"T","U","V","W","X","Y","Z"," "]
 	c = fileOp()
 	msg = ""
 	print("Be patient! May take some time.")
 	for  i in c:
-		m0 = i**d
-		m1 = m0%n
-		msg = msg+alpha[m1]
+		msg = msg+alpha[power(i,d,n)]
 	return(print(msg))
 
 def main():
