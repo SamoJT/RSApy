@@ -1,5 +1,4 @@
 #!/usr/bin/env python3.5
-import random
 import collections
 import sys
 import time
@@ -13,7 +12,10 @@ def is_prime(a):
 	return all(a % i for i in range(2, a))
 
 def PubPrivGen(p,q,timeout):
-	n = p*q 
+	n = p*q
+	if len(str(n)) < 7:
+		print("The value of n was less than 6.")
+		main()
 	phiN = (p-1)*(q-1)
 	e = 65537
 	count = 0
@@ -39,7 +41,7 @@ def PubPrivGen(p,q,timeout):
 		("-"*60),e,n,d,n,str(time.time()-start_time),count,("-"*60)))
 
 def main():
-	print("----Choose primes larger than 101-----")
+	print("----Choose primes larger than 5000----")
 	print("Please note this is not optimised and the larger the prime the longer it takes to compute the keys.")
 	timeout = input("Enter a timeout value for the keygen in seconds. press enter to default to 60. >> ")
 	while any(c.isalpha() for c in timeout) == True:
