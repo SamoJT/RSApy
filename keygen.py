@@ -2,9 +2,12 @@
 import collections
 import sys
 import time
-import re
 from math import gcd as bltin_gcd
-
+'''
+A python 3.5+ RSA key generator. Used in conjunction with encrypt-Decrypt
+to create encoded hex strings or .txt files which can be sent to the desired
+recipient.
+'''
 def coprime(a, b):
     return bltin_gcd(a, b) == 1
 
@@ -15,25 +18,21 @@ def PubPrivGen(p,q,timeout):
 	n = p*q
 	if len(str(n)) < 7:
 		print("The value of n was less than 6.")
-		main()
+		return(main())
 	phiN = (p-1)*(q-1)
 	e = 65537
 	count = 0
 	val = 1
 	print("Working! Be patient.")
 	start_time = time.time()
-	#print("DEBUG: "+"e: "+str(e)+" n:"+str(n))
 	while count != val:
 		dTemp = val
-		#print((dTemp*e)%phiN) #DEBUG
 		if (dTemp*e)%phiN == 1:
 			d = dTemp
-			#print("Final D: "+str(d)) #DEBUG
 			break
 		else:
 			count += 1
 			val += 1
-			#print("Attempt: " + str(count) +" failed with value: " + str(dTemp)) #IF ENABLED TAKES UPTO 26x AS LONG! (if not more)
 			if time.time()-start_time >= timeout:
 				return("Failed due to timeout of %s seconds." % (timeout))
 			continue
@@ -42,8 +41,7 @@ def PubPrivGen(p,q,timeout):
 
 def main():
 	print("----Choose primes larger than 5000----")
-	print("Please note this is not optimised and the larger the prime the longer it takes to compute the keys.")
-	timeout = input("Enter a timeout value for the keygen in seconds. press enter to default to 60. >> ")
+	timeout = input("Enter a timeout value for the keygen in seconds. [ENTER] to default to 60:  ")
 	while any(c.isalpha() for c in timeout) == True:
 		timeout = input("Enter a timeout value for the keygen in seconds, must be int or float. Press enter to default to 60. >> ")
 	if timeout == "":
