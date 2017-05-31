@@ -25,26 +25,35 @@ def fileOp():
 	f.close()
 	return(enMsgTxt)
 
-def encrypt(msg,e,n):
+def encrypt(msg,e,n,gui):
+	print("In Encrypt - msg: "+str(msg))
+	print("In Encrypt - e: "+str(e))
+	print("In Encrypt - n: "+str(n))
+	mgm = str(msg)
 	enMsgList = []
 	enMsgPrint = ""
 	for i in msg: #To create a list used for the txt file.
 		i = ord(i)
 		enMsgList.append(pow(i,e,n))
 	msgBytes = msg.encode()
+	tst = msgBytes.decode()
+	print(tst)
 	msgInt = int.from_bytes(msgBytes,byteorder = "big")
 	msgInt = str(msgInt)
 	chunkedList = list(chunkstring(msgInt,6))
 	for i in chunkedList:
-		i = int(i)
+		i = int(i)	
 		rsa = pow(i,e,n)
 		hexed = "{:x}".format(rsa)
 		enMsgPrint = (enMsgPrint+str(hexed)+"l")
-	print("Done! Send either the .txt file or the string of numbers to the recipient. \n")
-	print(enMsgPrint)
-	return(fileMk(enMsgList))
+	if gui == True:
+		return(enMsgPrint)
+	else:
+		print("Done! Send either the .txt file or the string of numbers to the recipient. \n")
+		print(enMsgPrint)
+		return(fileMk(enMsgList))
 
-def decrypt(d,n,enMsg):
+def decrypt(d,n,enMsg,gui):
 	deMsg = ""
 	numStr = ""
 	msgList = []
@@ -59,8 +68,11 @@ def decrypt(d,n,enMsg):
 	else:
 		splitEnMsg = re.split("l",enMsg)
 		splitEnMsg = list(filter(None,splitEnMsg))
+		#print(splitEnMsg)
 		count = 1
 		for i in splitEnMsg:
+			if i == "\n":
+				continue
 			dec = int(i,16)
 			unRSA = pow(dec,d,n)
 			if len(str(unRSA)) < 6 and count < len(splitEnMsg):
@@ -72,7 +84,10 @@ def decrypt(d,n,enMsg):
 		msgInt = int(numStr)
 		msgBytes = msgInt.to_bytes(msgInt.bit_length(), byteorder="big")
 		decoded = msgBytes.decode()
-		return(print("%s Your decoded message is %s \n %s \n%s"%("-"*25,"-"*25,decoded,"-"*74)))
+		if gui == True:
+			return(decoded)
+		else:
+			return(print("%s Your decoded message is %s \n %s \n%s"%("-"*25,"-"*25,decoded,"-"*74)))
 
 def main():
 	choice = input("Are you encrypting (e) or decrypting (d)? ")
@@ -80,7 +95,7 @@ def main():
 		m = input("Enter a message to be encrypted: ")
 		e = int(input("Enter the public key pt. e: "))
 		n = int(input("Enter the public key pt. n: "))
-		encrypt(m,e,n)
+		encrypt(m,e,n,False)
 	elif choice.upper() == "D":
 		choice2 = input("Are you inputting the hex string (h) or using rsaEnc.txt (r)? ")
 		if choice2 == "r":
@@ -88,12 +103,12 @@ def main():
 			d = int(input("Enter private key pt. d: "))
 			n = int(input("Enter private key pt. n: "))
 			m = None
-			decrypt(d,n,m)
+			decrypt(d,n,m,False)
 		else:
 			m = input("Enter hex string: ")
 			d = int(input("Enter private key pt. d: "))
 			n = int(input("Enter private key pt. n: "))
-			decrypt(d,n,m)
+			decrypt(d,n,m,False)
 	else:
 		main()
 
