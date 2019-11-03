@@ -1,5 +1,5 @@
 # RSApy
-Note: Python 3.5 or greater is required to run the keygen file due to gcd being used.
+Note: Python 3.7+
 
 To generate the two keys run and follow instructions:
 $USER>>python3 keygen.py
