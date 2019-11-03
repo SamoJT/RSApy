@@ -1,9 +1,8 @@
-#!/usr/bin/env python3.5
 import collections
 import sys
 import time
 '''
-A python 3.0+ RSA key generator. Used in conjunction with encrypt-Decrypt
+A python 3.6+ RSA key generator. Used in conjunction with encrypt-Decrypt
 to create encoded hex strings or .txt files which can be sent to the desired
 recipient.
 '''
@@ -18,28 +17,21 @@ def PubPrivGen(p,q,timeout,gui):
 		return(main())
 	phiN = (p-1)*(q-1)
 	e = 65537
-	count = 0
 	val = 2
 	print("Working! Be patient.")
 	start_time = time.time()
-	while True:
-		dTemp = val
-		if (dTemp*e)%phiN == 1:
-			d = dTemp
-			break
-		else:
-			count += 1
-			val += 1
-			if time.time()-start_time >= timeout:
-				return("Failed due to timeout of %s seconds." % (timeout))
-			continue
+
+	while (val*e)%phiN != 1:
+		val += 1
+		if time.time()-start_time >= timeout:
+			return(f"Failed due to timeout of {timeout} seconds.")
+
 	if gui == True:
 		return(e,n,d)
 	else:
-		return("%s \nThe public key is (e,n): (%d,%d) \nThe private key is (d,n): (%d,%d)  \nDone in %s seconds on attempt no. %d. \n %s" % (
-			("-"*60),e,n,d,n,str(time.time()-start_time),count,("-"*60)))
+		return(f"{'-'*60}\nThe public key is (e,n): ({e},{n})\nThe private key is (d,n): ({val},{n})\nDone in {str(time.time()-start_time)} on attempt no. {count}\n{'-'*60}")
 
-def main():
+def main():	
 	gui = False
 	print("----Choose primes larger than 5000----")
 	timeout = input("Enter a timeout value for the keygen in seconds. [ENTER] to default to 60:  ")
@@ -49,21 +41,21 @@ def main():
 		timeout = 60
 	timeout = float(timeout)
 
-	p = int(input("Enter a secret prime number: "))
-	while is_prime(p) != True:
-		if p%2 ==0:
-			p += 1
-		else:
-			p +=2
-		if is_prime(p) == True:
-			break
-		continue
-	q = int(input("Enter another secret prime: "))
-	while is_prime(q) != True:
-		q += 1
-		if is_prime(q) == True:
-			break
-		continue
+	p = False
+	while True:
+		if not p:	
+			p = int(input("Enter a secret prime number: "))
+			if is_prime(p) == False:
+				print("Not a prime. Please try another number")
+				p = False
+				continue
+
+		q = int(input("Enter another secret prime: "))
+		if is_prime(q) == False:
+			print("Not a prime. Please try another number")
+			continue
+		break
+
 	print(PubPrivGen(p,q,timeout,gui))
 
 if __name__ == '__main__':
